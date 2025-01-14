@@ -7,20 +7,9 @@ from datetime import datetime
 import pandas as pd
 
 # Connect to Snowflake
-@st.cache_resource()
-def connect_to_snowflake():
-    connection_parameters = json.load(open('../connection.json'))
-    session = Session.builder.configs(connection_parameters).create()
-    session.use_database('INSURANCE')
-    session.use_schema('ML_PIPE')
-    session.use_warehouse('COMPUTE_WH')
-    print("Connected to Snowflake successfully")
-    if 'session' not in st.session_state:
-        st.session_state.session = session
-    return session
 
-
-session = connect_to_snowflake()
+from snowflake.snowpark.context import get_active_session
+session = get_active_session()
 
 # Create model registry and add to session state
 model_registry = registry.Registry(session=session, database_name=session.get_current_database(), schema_name=session.get_current_schema())
